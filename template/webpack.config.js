@@ -27,8 +27,8 @@ module.exports = {
     {{#if_eq source false}}
     path: path.resolve(__dirname, './dist'),
     {{/if_eq}}
-    filename: process.env.NODE_ENV === 'production' ? '[name].js?[chunkhash]' : '[name].js',
-    chunkFilename: './js/[id].js?[chunkhash]',
+    publicPath: '/dist/',
+    filename: 'build.js',
   },
   module: {
     rules: [
