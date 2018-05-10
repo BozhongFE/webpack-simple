@@ -2,8 +2,8 @@ const path = require('path')
 const webpack = require('webpack')
 {{#less}}
 const autoprefixer = require('autoprefixer');
-{{/less}}
 
+{{/less}}
 {{#source}}
 const fs = require('fs');
 const sourcePath = process.env.npm_config_source;
@@ -15,8 +15,8 @@ if (typeof sourcePath === 'undefined') {
 } else if (!fs.existsSync(sourcePath)) {
   throw new Error('source根目录不存在，请检查配置的source根目录是否正确');
 }
-{{/source}}
 
+{{/source}}
 module.exports = {
   entry: './src/main.js',
   output: {
