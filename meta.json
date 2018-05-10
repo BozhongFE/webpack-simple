@@ -20,11 +20,16 @@
       "label": "License",
       "default": "MIT"
     },
-    "sass": {
+    "less": {
        "type": "confirm",
-       "message": "Use sass?",
+       "message": "Use less?",
        "default": false
+    },
+    "source": {
+      "type": "confirm",
+      "message": "output to source repository?",
+      "default": false
     }
   },
-  "completeMessage": "{{#inPlace}}To get started:\n\n  npm install\n  npm run dev{{else}}To get started:\n\n  cd {{destDirName}}\n  npm install\n  npm run dev{{/inPlace}}"
+  "completeMessage": "{{#inPlace}}To get started:\n\n  npm install\n  npm run dev{{else}}To get started:\n\n  cd {{destDirName}}\n  npm install\n  npm run dev {{#source}}\n set ./webpack.config.js output.path{{source}}{{/inPlace}}"
 }

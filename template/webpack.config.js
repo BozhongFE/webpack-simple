@@ -1,76 +1,83 @@
-var path = require('path')
-var webpack = require('webpack')
+const path = require('path')
+const webpack = require('webpack')
+{{#less}}
+const autoprefixer = require('autoprefixer');
+{{/less}}
+
+{{#source}}
+const fs = require('fs');
+const sourcePath = process.env.npm_config_source;
+
+if (typeof sourcePath === 'undefined') {
+  console.log('请先配置打包输出的source根目录');
+  console.log('Example: npm config set source "D:\\source"');
+  throw new Error('没有配置模块路径');
+} else if (!fs.existsSync(sourcePath)) {
+  throw new Error('source根目录不存在，请检查配置的source根目录是否正确');
+}
+{{/source}}
 
 module.exports = {
   entry: './src/main.js',
   output: {
+    {{#if_eq source true}}
+    // 按项目路径修改打包输出的路径_filePath，如activity/health，_filepath改成'./activity/health'
+    path: path.resolve(sourcePath, '_filePath'),
+    {{/if_eq}}
+    {{#if_eq source false}}
     path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
-    filename: 'build.js'
+    {{/if_eq}}
+    filename: process.env.NODE_ENV === 'production' ? '[name].js?[chunkhash]' : '[name].js',
+    chunkFilename: './js/[id].js?[chunkhash]',
   },
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: [
-          'vue-style-loader',
-          'css-loader'
-        ],
-      },{{#sass}}
-      {
-        test: /\.scss$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader'
-        ],
-      },
-      {
-        test: /\.sass$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader?indentedSyntax'
-        ],
-      },
-      {{/sass}}
-      {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          loaders: {
-            {{#sass}}
-            // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-            // the "scss" and "sass" values for the lang attribute to the right configs here.
-            // other preprocessors should work out of the box, no loader config like this necessary.
-            'scss': [
-              'vue-style-loader',
-              'css-loader',
-              'sass-loader'
-            ],
-            'sass': [
-              'vue-style-loader',
-              'css-loader',
-              'sass-loader?indentedSyntax'
-            ]
-            {{/sass}}
-          }
+          {{#less}}
+          postcss: [autoprefixer({
+            browsers: ['iOS >= 8', 'Android >= 4.1'],
+          })],
+          {{/less}}
           // other vue-loader options go here
         }
       },
       {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
+        ],
+      },
+      {{#less}}
+      // 需单独打包↓↓
+      // {
+      //   test: /\.less$/,
+      //   use: ExtractTextPlugin.extract({
+      //     fallback: 'style-loader',
+      //     use:[
+      //       'css-loader?-autoprefixer',
+      //       'less-loader',
+      //     ],
+      //   }),
+      // },
+      {{/less}}
+      {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
+        loader: 'url-loader',
         options: {
-          name: '[name].[ext]?[hash]'
-        }
-      }
-    ]
+          limit: 12 * 1024,
+          name: './images/[name].[ext]?[hash]',
+        },
+      },
+    ],
   },
   resolve: {
     alias: {
@@ -90,22 +97,22 @@ module.exports = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
+  module.exports.devtool = '#source-map',
   // http://vue-loader.vuejs.org/en/workflow/production.html
   module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: '"production"'
-      }
+        NODE_ENV: '"production"',
+      },
     }),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,
       compress: {
-        warnings: false
-      }
+        warnings: false,
+      },
     }),
     new webpack.LoaderOptionsPlugin({
-      minimize: true
+      minimize: true,
     })
   ])
 }
