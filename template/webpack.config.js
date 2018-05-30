@@ -19,9 +19,9 @@ if (typeof sourcePath === 'undefined') {
 
 {{/source}}
 module.exports = {
-  entry: {{#htmlwebpackPlugin}}'./src/main.js'{{/htmlwebpackPlugin}}{{#if_eq htmlwebpackPlugin true}}{
+  entry: {{#if_eq htmlwebpackPlugin false}}'./src/main.js'{{/if_eq}}{{#htmlwebpackPlugin}}{
     main: './src/main.js'
-  }{{/if_eq}},
+  }{{/htmlwebpackPlugin}},
   output: {
     {{#if_eq source true}}
     // 按项目路径修改打包输出的路径_filePath，如activity/health，_filepath改成'./activity/health'
@@ -96,8 +96,7 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map',
-  {{#htmlwebpackPlugin}}
+  devtool: '#eval-source-map',{{#htmlwebpackPlugin}}
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'index.html',
