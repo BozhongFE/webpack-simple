@@ -16,22 +16,29 @@ if (typeof sourcePath === 'undefined') {
 } else if (!fs.existsSync(sourcePath)) {
   throw new Error('source根目录不存在，请检查配置的source根目录是否正确');
 }
-
 {{/source}}
+
 module.exports = {
-  entry: {{#if_eq htmlwebpackPlugin false}}'./src/main.js'{{/if_eq}}{{#htmlwebpackPlugin}}{
-    main: './src/main.js'
-  }{{/htmlwebpackPlugin}},
+  {{#if_eq htmlwebpackPlugin false}}
+  entry: './src/main.js',
+  {{/if_eq}}{{#htmlwebpackPlugin}}
+  entry: {
+    main: './src/main.js',
+  },
+  {{/htmlwebpackPlugin}}
   output: {
-    {{#if_eq source true}}
+    {{#source}}
     // 按项目路径修改打包输出的路径_filePath，如activity/health，_filepath改成'./activity/health'
     path: path.resolve(sourcePath, '_filePath'),
-    {{/if_eq}}
-    {{#if_eq source false}}
+    {{/source}}{{#if_eq source false}}
     path: path.resolve(__dirname, './dist'),
-    {{/if_eq}}
+    {{/if_eq}}{{#if_eq htmlwebpackPlugin false}}
     publicPath: '/dist/',
     filename: 'build.js',
+    {{/if_eq}}{{#htmlwebpackPlugin}}
+    filename: process.env.NODE_ENV === 'production' ? '[name].js?[chunkhash]' : '[name].js',
+    {{/htmlwebpackPlugin}}
+    chunkFilename: '[id].js?[chunkhash]',
   },
   module: {
     rules: [

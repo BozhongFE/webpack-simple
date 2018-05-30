@@ -37,7 +37,8 @@
     }
   },
   "filters": {
-    "src/index.html": "htmlwebpackPlugin"
+    "src/index.html": "htmlwebpackPlugin",
+    "index.html": "!htmlwebpackPlugin"
   },
   "completeMessage": "{{#inPlace}}To get started:\n\n  npm install\n  npm run dev{{else}}To get started:\n\n  cd {{destDirName}}\n  npm install\n  npm run dev {{/inPlace}}\n  check ./webpack.config.js output.path"
 }
