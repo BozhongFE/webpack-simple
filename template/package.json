@@ -26,14 +26,15 @@
     "es6-promise": "^4.2.4",
     "cross-env": "^5.1.6",
     "css-loader": "^0.28.7",
-    "url-loader": "^1.0.1",
-    {{#less}}
+    "url-loader": "^1.0.1",{{#less}}
     "less": "^3.0.4",
     "less-loader": "^4.1.0",
-    {{/less}}
+    {{/less}}{{#htmlwebpackPlugin}}
+    "html-webpack-plugin": "^3.2.0",
+    {{/htmlwebpackPlugin}}
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.4.4",
-    "webpack": "^3.6.0",
+    "webpack": "^3.12.0",
     "webpack-dev-server": "^2.11.2"
   }
 }

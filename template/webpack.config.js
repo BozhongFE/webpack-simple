@@ -1,10 +1,11 @@
 const path = require('path')
-const webpack = require('webpack')
-{{#less}}
+const webpack = require('webpack'){{#htmlwebpackPlugin}}
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+{{/htmlwebpackPlugin}}{{#less}}
 const autoprefixer = require('autoprefixer');
-
 {{/less}}
 {{#source}}
+
 const fs = require('fs');
 const sourcePath = process.env.npm_config_source;
 
@@ -18,7 +19,9 @@ if (typeof sourcePath === 'undefined') {
 
 {{/source}}
 module.exports = {
-  entry: './src/main.js',
+  entry: {{#htmlwebpackPlugin}}'./src/main.js'{{/htmlwebpackPlugin}}{{#if_eq htmlwebpackPlugin true}}{
+    main: './src/main.js'
+  }{{/if_eq}},
   output: {
     {{#if_eq source true}}
     // 按项目路径修改打包输出的路径_filePath，如activity/health，_filepath改成'./activity/health'
@@ -93,7 +96,15 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  devtool: '#eval-source-map',
+  {{#htmlwebpackPlugin}}
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'src/index.html',
+      chunks: ['main'],
+    }),
+  ]{{/htmlwebpackPlugin}}
 }
 
 if (process.env.NODE_ENV === 'production') {

@@ -25,11 +25,19 @@
        "message": "Use less?",
        "default": false
     },
+    "htmlwebpackPlugin": {
+       "type": "confirm",
+       "message": "Use html-webpack-plugin?",
+       "default": false
+    },
     "source": {
       "type": "confirm",
       "message": "output to source repository?",
       "default": false
     }
+  },
+  "filters": {
+    "src/index.html": "htmlwebpackPlugin"
   },
   "completeMessage": "{{#inPlace}}To get started:\n\n  npm install\n  npm run dev{{else}}To get started:\n\n  cd {{destDirName}}\n  npm install\n  npm run dev {{/inPlace}}\n  check ./webpack.config.js output.path"
 }
