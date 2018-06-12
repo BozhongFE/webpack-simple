@@ -34,6 +34,12 @@
     {{#htmlwebpackPlugin}}
     "html-webpack-plugin": "^3.2.0",
     {{/htmlwebpackPlugin}}
+    {{#if_or redirected source}}
+    "fs": "0.0.1-security",
+    {{/if_or}}
+    {{#redirected}}
+    "jsdom": "^11.9.0",
+    {{/redirected}}
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.4.4",
     "webpack": "^3.12.0",

@@ -1,12 +1,12 @@
 const path = require('path')
 const webpack = require('webpack'){{#htmlwebpackPlugin}}
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-{{/htmlwebpackPlugin}}{{#less}}
-const autoprefixer = require('autoprefixer');
-{{/less}}
+const HtmlWebpackPlugin = require('html-webpack-plugin');{{/htmlwebpackPlugin}}{{#less}}
+const autoprefixer = require('autoprefixer');{{/less}}{{#redirected}}
+const jsdom = require('jsdom');{{/redirected}}{{#if_or redirected source}}
+const fs = require('fs');
+{{/if_or}}
 {{#source}}
 
-const fs = require('fs');
 const sourcePath = process.env.npm_config_source;
 
 if (typeof sourcePath === 'undefined') {
@@ -17,6 +17,65 @@ if (typeof sourcePath === 'undefined') {
   throw new Error('source根目录不存在，请检查配置的source根目录是否正确');
 }
 {{/source}}
+{{#redirected}}
+// 给插入html的js加版本号
+function HtmlAutoDomainWebpackPlugin(options) {
+}
+
+HtmlAutoDomainWebpackPlugin.prototype.apply = (compiler) => {
+  const sortMap = {
+    main: 0,
+  };
+  compiler.plugin('compile', (params) => {});
+  compiler.plugin('compilation',  (compilation) => {
+    compilation.plugin('optimize-chunk-assets', (chunks, callback) => {
+      const source = fs.readFileSync(path.resolve(__dirname, './src/index.html'), 'utf-8');
+      const files = [];
+      chunks.forEach((chunk) => {
+        if (chunk.name) {
+          chunk.files.forEach((file) => {
+            // 只筛选所有页面公用部分
+            if (sortMap.hasOwnProperty(file.match(/(.+).js/)[1])) {
+              files.push(file);
+            }
+          });
+        }
+      });
+      files.sort((a, b) => {
+        let aName = a.match(/(.+).js/);
+        let bName = b.match(/(.+).js/);
+        if (aName.length >= 1) {
+          aName = aName[1];
+        }
+        if (bName.length >= 1) {
+          bName = bName[1];
+        }
+        // console.log(aName, bName);
+        return sortMap[aName] > sortMap[bName];
+      });
+      console.log(files);
+      compilation.assets['./index.html'] = {
+        source() {
+          const dom = new jsdom.JSDOM(source);
+          const script = dom.window.document.createElement('script');
+          console.log(files);
+          const hash = files[0].match(/\?(.+)/);
+          let html = `var hash = '${hash && hash[1] ? hash[1] : ''}';`;
+          html += `var files = ${JSON.stringify(files)};`;
+          script.innerHTML = html;
+          dom.window.document.querySelector('head').appendChild(script)
+          return dom.serialize();
+        },
+        size() {
+          return source.length;
+        },
+      };
+      callback();
+    });
+  })
+};
+{{/redirected}}
+
 
 module.exports = {
   {{#if_eq htmlwebpackPlugin false}}
@@ -91,7 +150,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      src: path.resolve(__dirname, './src')
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
@@ -130,6 +190,14 @@ if (process.env.NODE_ENV === 'production') {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true,
-    })
+    }),
+    {{#redirected}}
+    new HtmlAutoDomainWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'src/index.html',
+      chunks: [],
+    }),
+    {{/redirected}}
   ])
 }
