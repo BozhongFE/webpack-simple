@@ -28,3 +28,4 @@ $ npm run dev
 |#|20180510|依赖调整、sass更换成less、新增reset.css、打包输出到source;
 |#|20180530|新增html-webpack-plugin;
 |#|20180612|新增重定向后basehref/脚本引用相关;
+|#|20180612|新增webpack-bundle-analyzer;

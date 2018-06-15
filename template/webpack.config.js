@@ -1,5 +1,6 @@
-const path = require('path')
-const webpack = require('webpack'){{#htmlwebpackPlugin}}
+const path = require('path');
+const webpack = require('webpack');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;{{#htmlwebpackPlugin}}
 const HtmlWebpackPlugin = require('html-webpack-plugin');{{/htmlwebpackPlugin}}{{#less}}
 const autoprefixer = require('autoprefixer');{{/less}}{{#redirected}}
 const jsdom = require('jsdom');{{/redirected}}{{#if_or redirected source}}
@@ -191,6 +192,7 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.LoaderOptionsPlugin({
       minimize: true,
     }),
+    new BundleAnalyzerPlugin(),
     {{#redirected}}
     new HtmlAutoDomainWebpackPlugin(),
     new HtmlWebpackPlugin({
