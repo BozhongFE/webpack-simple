@@ -9,6 +9,7 @@ This is a project template.
 ``` bash
 $ npm install -g vue-cli
 $ vue init BozhongFE/webpack-simple my-project
+// or $ vue init BozhongFE/webpack-simple#v0.2.0 my-project
 $ cd my-project
 $ npm install
 $ npm run dev
