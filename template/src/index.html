@@ -21,8 +21,8 @@
       }
 
       var baseHref = document.createElement('base');
-      // 按项目路径修改basehref路径_filePath，如activity/health，_filepath改成'activity/health'
-      baseHref.href = domain + '/_filePath';
+      // 按项目路径修改basehref路径_filePath，如activity/health，_filepath改成'/activity/health/'
+      baseHref.href = domain + '/_filePath/';
 
       document.head.appendChild(baseHref);
     }
@@ -34,6 +34,7 @@
   </div>{{#redirected}}
   <script type="text/javascript">
     if (env === 'product') {
+      var files = <%=JSON.stringify(htmlWebpackPlugin.files.js)%>;
       var queueIndex = 0;
       function loadScript (src, next) {
         var script = document.createElement('script');
@@ -55,7 +56,6 @@
       }
       loadScriptLoop();
     }
-  </script>
-{{/redirected}}
+  </script>{{/redirected}}
 </body>
 </html>

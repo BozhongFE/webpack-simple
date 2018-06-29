@@ -2,11 +2,8 @@ const path = require('path');
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;{{#htmlwebpackPlugin}}
 const HtmlWebpackPlugin = require('html-webpack-plugin');{{/htmlwebpackPlugin}}{{#less}}
-const autoprefixer = require('autoprefixer');{{/less}}{{#redirected}}
-const jsdom = require('jsdom');{{/redirected}}{{#if_or redirected source}}
+const autoprefixer = require('autoprefixer');{{/less}}{{#source}}
 const fs = require('fs');
-{{/if_or}}
-{{#source}}
 
 const sourcePath = process.env.npm_config_source;
 
@@ -18,88 +15,6 @@ if (typeof sourcePath === 'undefined') {
   throw new Error('source根目录不存在，请检查配置的source根目录是否正确');
 }
 {{/source}}
-{{#redirected}}
-// 给插入html的js加版本号
-class HtmlAutoDomainWebpackPlugin {
-  constructor (options) {
-    const obj = {};
-    for (let i in options) {
-      if (Object.prototype.toString.call(options[i]) === '[object Object]') {
-        const key = options[i].filename;
-        if (key) {
-          obj[key] = {};
-          if (options[i].chunks) {
-            const chunks = options[i].chunks;
-            for (let j in chunks) {
-              obj[key][chunks[j]] = j;
-            }
-          }
-        }
-      }
-    }
-    this.options = obj;
-  }
-  apply(compiler) {
-    const configs = this.options;
-  
-    compiler.plugin('compile', (params) => {
-    });
-    compiler.plugin('compilation',  (compilation) => {
-      compilation.plugin('optimize-chunk-assets', (chunks, callback) => {
-        const files = {};
-        chunks.forEach((chunk) => {
-          if (chunk.name) {
-            chunk.files.forEach((file) => {
-              // 只筛选所有页面公用部分
-              for (let key in configs) {
-                console.log(configs, key)
-                if (configs[key].hasOwnProperty(file.match(/(.+).js/)[1])) {
-                  if (!files[key]) files[key] = [];
-                  files[key].push(file);
-                }
-              }
-            });
-          }
-        });
-        console.log(files)
-        for (let key in files) {
-          const source = fs.readFileSync(path.resolve(__dirname, `./src/${key}`), 'utf-8');
-          const config = configs[key];
-          files[key].sort((a, b) => {
-            let aName = a.match(/(.+).js/);
-            let bName = b.match(/(.+).js/);
-            if (aName.length >= 1) {
-              aName = aName[1];
-            }
-            if (bName.length >= 1) {
-              bName = bName[1];
-            }
-            return config[aName] > config[bName];
-          });
-          compilation.assets[`./${key}`] = {
-            source() {
-              const dom = new jsdom.JSDOM(source);
-              const script = dom.window.document.createElement('script');
-              // console.log(files);
-              const hash = files[key][0].match(/\?(.+)/);
-              let html = `var hash = '${hash && hash[1] ? hash[1] : ''}';`;
-              html += `var files = ${JSON.stringify(files[key])};`;
-              script.innerHTML += html;
-              dom.window.document.querySelector('head').appendChild(script)
-              return dom.serialize();
-            },
-            size() {
-              return source.length;
-            },
-          };
-        };
-        callback();
-      })
-    })
-  }
-}
-{{/redirected}}
-
 
 module.exports = {
   {{#if_eq htmlwebpackPlugin false}}
@@ -192,7 +107,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/index.html',
-      chunks: ['main'],
+      chunks: ['main'],{{#redirected}}
+      chunksSortMode: 'dependency',
+      inject: false,
+      {{/redirected}}
     }),
   ]{{/htmlwebpackPlugin}}
 }
@@ -216,19 +134,5 @@ if (process.env.NODE_ENV === 'production') {
       minimize: true,
     }),
     new BundleAnalyzerPlugin(),
-    {{#redirected}}
-    // 给html注入的js加版本号，用于重定向时文件引入
-    new HtmlAutoDomainWebpackPlugin([
-      {
-        filename: 'index.html',
-        chunks: ['main'],
-      },
-    ]),
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: 'src/index.html',
-      chunks: [],
-    }),
-    {{/redirected}}
   ])
 }

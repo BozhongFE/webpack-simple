@@ -31,3 +31,4 @@ $ npm run dev
 |#|v0.1.0|20180612|新增重定向后basehref/脚本引用相关;
 |#|v0.1.0|20180615|新增webpack-bundle-analyzer;
 |#|v0.2.0|20180627|内置HtmlAutoDomainWebpackPlugin插件优化
+|#|v0.3.0|20180629|摘除HtmlAutoDomainWebpackPlugin，相应功能由html-webpack-plugin实现
