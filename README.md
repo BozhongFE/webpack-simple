@@ -33,4 +33,5 @@ $ npm run dev
 |#|v0.2.0|20180627|内置HtmlAutoDomainWebpackPlugin插件优化
 |#|v0.3.0|20180629|摘除HtmlAutoDomainWebpackPlugin，相应功能由html-webpack-plugin实现
 |#|v0.3.1|20180702|修复html-webpack-plugin开发/生产环境不同配置问题
-|#|v0.4.0|20180702|开发环境自动匹配本机ip，port写定8000
+|#|v0.4.0|20180713|开发环境自动匹配本机ip，port写定8000
+|#|v0.4.0|20180716|修正重定向项目用ip访问被判断为生产环境bug
