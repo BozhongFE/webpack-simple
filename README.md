@@ -42,3 +42,4 @@ $ npm run dev
 |#|v0.4.1|20180725| images文件夹改名/file-loader补充
 |#|v0.5.0|20190422| 新增分享图自动复制/bzConfig引入/打包的静态html去掉多余代码
 |#|v0.5.1|20190423| 去除打包后的sourceMap/修复插件CopyShareImg对BundleAnalyzerPlugin的影响
+|#|v0.5.2|20190510| 修改bzConfig引入路径

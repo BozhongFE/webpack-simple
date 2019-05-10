@@ -65,7 +65,7 @@
   </div>{{#redirected}}
   <% if (env !== 'dev') { %>
   <script type="text/javascript">
-    var files = <%=JSON.stringify([htmlWebpackPlugin.options.bzConfigPath, ...htmlWebpackPlugin.files.js])%>;
+    var files = [domain + '/common/js/config.js'].concat(<%=JSON.stringify([...htmlWebpackPlugin.files.js])%>);
     var queueIndex = 0;
     function loadScript (src, next) {
       var script = document.createElement('script');

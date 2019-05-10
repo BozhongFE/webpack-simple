@@ -176,7 +176,6 @@ if (process.env.NODE_ENV === 'production') {
       chunks: ['main'],
       chunksSortMode: 'dependency',
       inject: false,
-      {{#source}}bzConfigPath: '../../common/js/config.js',{{/source}}
       {{#if_eq source false}}bzConfigPath: 'https://scdn.bozhong.com/source/common/js/config.js',{{/if_eq}}
     }),
     {{/if_and}}
