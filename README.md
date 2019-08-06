@@ -1,4 +1,4 @@
-# BozhongFE/webpack-simple
+# BozhongFE/webpack-simple 已废弃，请前往 https://github.com/BozhongFE/webpack-bz
 
 Fork from [vuejs-templates/webpack-simple](https://github.com/vuejs-templates/webpack-simple)
 
